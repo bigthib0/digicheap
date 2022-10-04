@@ -1,1 +1,1 @@
-web: gunicorn app:digicheap
+web: gunicorn digicheap:app
