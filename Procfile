@@ -1,1 +1,1 @@
-web: gunicorn — bind 0.0.0.0:$PORT app:digicheap
+web: gunicorn app:digicheap
