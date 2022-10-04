@@ -70,6 +70,12 @@ def delete_product(product_name):
     product_ref.document(product_name).delete()
     return "deleted"
 
+
+@app.route("/product/<product_name>/history")
+def get_product_history(product_name):
+    doc = product_ref.document(product_name).get()
+    return doc.to_dict()["price_history"]
+
 @app.route("/products")
 def getAllProductsWithLatestPrices():
     print("getAllProductsWithLatestPrices")
@@ -84,6 +90,8 @@ def getAllProductsWithLatestPrices():
             "date": product_last_price.get("date"),
             "url": product.to_dict()["url"]
         })
+
+    print({"products": prices})
     return {"products": prices}
     
 
