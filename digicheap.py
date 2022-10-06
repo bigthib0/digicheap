@@ -41,7 +41,7 @@ def get_price_date_galaxus(product_name):
     
     return (name, price, url)
 
-@app.route("/product/new/<origin</<product_name>")
+@app.route("/product/new/<product_name>")
 def add_product(product_name, origin):
     url = ""
     price = 0
