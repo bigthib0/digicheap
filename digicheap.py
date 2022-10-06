@@ -17,18 +17,39 @@ default_app = initialize_app(cred)
 db = firestore.client(default_app)
 product_ref = db.collection('products')
 
-
-@app.route("/product/new/<product_name>")
-def add_product(product_name):
+def get_price_date_digitec(product_name):
     url = "https://www.digitec.ch/fr/s1/product/" + product_name
     page = requests.get(url)
     soup = BeautifulSoup(page.content, 'html.parser')
     # <strong class="sc-1aeovxo-1 jchvyw">449.–</strong>
-    price = soup.find("strong", {"class": "sc-1aeovxo-1"}).text
+    price = float(soup.find("strong", {"class": "sc-1aeovxo-1"}).text)
     # all text in h1 with .sc-jqo5ci-0
     name = soup.find("h1", {"class": "sc-jqo5ci-0"}).text
     # remove the last 2 characters
     price = price[:-2]
+    
+    return (name, price, url)
+
+def get_price_date_galaxus(product_name):
+    url = "https://www.galaxus.ch/fr/s12/product/" + product_name
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+    # <span class="price">CHF 449.–</span>
+    price = float(soup.find("strong", {"class": "sc-1aeovxo-1"}).text)
+    # all text in h1 with .sc-jqo5ci-0
+    name = soup.find("h1", {"class": "sc-jqo5ci-0"}).text
+    
+    return (name, price, url)
+
+@app.route("/product/new/<origin</<product_name>")
+def add_product(product_name, origin):
+    url = ""
+    price = 0
+    name = ""
+    if origin == "digitec":
+        (name, price, url) = get_price_date_digitec()
+    if origin == "galaxus":
+        (name, price,url) = get_price_date_galaxus()
 
     # get current date and time
     date = datetime.datetime.now()
