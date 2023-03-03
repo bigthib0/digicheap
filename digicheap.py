@@ -6,8 +6,9 @@ from bs4 import BeautifulSoup
 import datetime
 from apscheduler.schedulers.background import BackgroundScheduler
 from firebase_admin import credentials, firestore, initialize_app
+import smtplib, ssl
 
-FETCH_PRICE_INTERVAL = 2  # minutes
+FETCH_PRICE_INTERVAL = 2  #minutes
 
 app = Flask(__name__)
 CORS(app)
@@ -165,6 +166,24 @@ def index():
 sched = BackgroundScheduler(daemon = True)
 sched.add_job(updateAllProducts, 'interval', minutes = FETCH_PRICE_INTERVAL)
 sched.start()
+
+def send_email(dest, message):
+    server.sendmail("price-alert@digiless.ch", dest, message)
+
+port = 465  # For SSL
+password = "webklmkW#4"
+
+# Create a secure SSL context
+context = ssl.create_default_context()
+
+message = """\
+Subject: Hi there
+
+This message is sent from Python."""
+
+with smtplib.SMTP_SSL("mail.infomaniak.com", port, context=context) as server:
+    server.login("price-alert@digiless.ch", password)
+    send_email("thibaut-michaud@hotmail.ch", message)                                                                        
 
 if __name__ == '__main__':
     # Threaded option to enable multiple instances for multiple user access support
